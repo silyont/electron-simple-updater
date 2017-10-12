@@ -52,6 +52,7 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.131.0",
     "httpreq": "^0.4.22",
     "semver": "*"
   }

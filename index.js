@@ -9,6 +9,10 @@ const linux            = require('./lib/linux');
 const getUpdatesMeta   = require('./lib/get-updates-meta');
 const normalizeOptions = require('./lib/normalize-options');
 
+const AWS     = require('aws-sdk');
+const s3      = new AWS.S3({ apiVersion: '2006-03-01' });
+const { URL } = require('url');
+
 class SimpleUpdater extends events.EventEmitter {
   constructor() {
     super();
@@ -23,7 +27,8 @@ class SimpleUpdater extends events.EventEmitter {
       empty:              true, // Mark that it's not initialized
       logger:             console,
       version:            '',
-      url:                ''
+      url:                '',
+      bucket:             ''
     };
 
     this.meta = {
@@ -153,7 +158,10 @@ class SimpleUpdater extends events.EventEmitter {
     this.emit('checking-for-update');
 
     //noinspection JSUnresolvedFunction
-    getUpdatesMeta(opt.url, opt.build, opt.channel, opt.version)
+    this.getSignedS3UpdatesMetaUrl()
+      .then(signedUrl => {
+        return getUpdatesMeta(signedUrl, opt.build, opt.channel, opt.version)
+      })
       .then((updateMeta) => {
         if (updateMeta) {
           this.onFoundUpdate(updateMeta);
@@ -170,6 +178,31 @@ class SimpleUpdater extends events.EventEmitter {
       .catch(e => this.emit('error', e));
 
     return this;
+  }
+
+  getSignedS3UpdatesMetaUrl() {
+    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: 'updates.json' })
+  }
+
+  getSignedS3UpdateUrl(url) {
+    const url = new URL(url)
+    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: url.pathname })
+  }
+
+  getSignedS3Url(params) {
+    const opt = this.options
+    return new Promise((resolve, reject) => {
+      s3.getSignedUrl('getObject', params, (err, url) => {
+        if (err) {
+          opt.logger.info(
+            `Failed to retrieve signed url for updates.json`
+          );
+          return reject(err)
+        }
+
+        resolve(url)
+      })
+    })
   }
 
   /**
