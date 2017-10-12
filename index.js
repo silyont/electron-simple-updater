@@ -186,7 +186,7 @@ class SimpleUpdater extends events.EventEmitter {
 
   getSignedS3UpdateUrl(url) {
     const updateUrl = new URL(url)
-    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: updateUrl.pathname })
+    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: updateUrl.pathname.replace(/^\//, '') })
   }
 
   getSignedS3Url(params) {
@@ -228,10 +228,11 @@ class SimpleUpdater extends events.EventEmitter {
     this.emit('update-downloading', this.meta);
 
     if (process.platform === 'linux') {
-      feedUrl = this.meta.update;
-
-      linux.downloadUpdate(feedUrl)
-        .then((appImagePath) => {
+      this.getSignedS3UpdateUrl(this.meta.update)
+        .then(url => {
+          return linux.downloadUpdate(url)
+        })
+        .then(appImagePath => {
           this.appImagePath = appImagePath;
           const version = this.meta.version;
           this.options.logger.info(`New version ${version} has been downloaded`);
