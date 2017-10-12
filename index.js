@@ -230,6 +230,7 @@ class SimpleUpdater extends events.EventEmitter {
     if (process.platform === 'linux') {
       this.getSignedS3UpdateUrl(this.meta.update)
         .then(url => {
+          feedUrl = url
           return linux.downloadUpdate(url)
         })
         .then(appImagePath => {
