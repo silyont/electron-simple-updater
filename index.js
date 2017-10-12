@@ -185,8 +185,8 @@ class SimpleUpdater extends events.EventEmitter {
   }
 
   getSignedS3UpdateUrl(url) {
-    const url = new URL(url)
-    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: url.pathname })
+    const updateUrl = new URL(url)
+    return this.getSignedS3Url({ Bucket: this.options.bucket, Key: updateUrl.pathname })
   }
 
   getSignedS3Url(params) {

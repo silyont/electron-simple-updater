@@ -1,6 +1,6 @@
 {
   "name": "electron-simple-updater",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Simple way to enable update for the electron application",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/megahertz/electron-simple-updater.git"
+    "url": "git+https://github.com/silyont/electron-simple-updater.git"
   },
   "files": [
     "index.js",
@@ -32,9 +32,9 @@
   "author": "Alexey Prokhorov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/megahertz/electron-simple-updater/issues"
+    "url": "https://github.com/silyont/electron-simple-updater/issues"
   },
-  "homepage": "https://github.com/megahertz/electron-simple-updater#readme",
+  "homepage": "https://github.com/silyont/electron-simple-updater#readme",
   "engines": {
     "node": ">=6.0"
   },
